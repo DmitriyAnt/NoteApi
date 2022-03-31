@@ -1,8 +1,7 @@
-from api import db, Config, ma
+from api import db, Config
 from passlib.apps import custom_app_context as pwd_context
 from itsdangerous import URLSafeTimedSerializer as Serializer
 from itsdangerous import BadSignature, SignatureExpired
-
 from sqlalchemy.exc import IntegrityError
 
 
@@ -32,12 +31,16 @@ class UserModel(db.Model):
         try:
             db.session.add(self)
             db.session.commit()
-        except IntegrityError:  # Обработка ошибки "создание пользователя с НЕ уникальным именем"
+        except IntegrityError as e:   # Обработка ошибки "создание пользователя с НЕ уникальным именем"
             db.session.rollback()
+            raise e
 
     def delete(self):
         db.session.delete(self)
         db.session.commit()
+
+    def get_roles(self):
+        return [self.role]
 
     @staticmethod
     def verify_auth_token(token):

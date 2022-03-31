@@ -20,7 +20,25 @@ class TestUsers(TestCase):
 
         with self.app.app_context():
             # create all tables
+            db.drop_all()
             db.create_all()
+
+    # Создаем и залогиниваем пользователя
+    def create_and_auth_user(self):
+        user_data = {
+            "username": 'admin',
+            'password': 'admin'
+        }
+
+        user = UserModel(**user_data)
+        user.save()
+        self.user = user
+        # "login:password" --> b64 --> 'ksjadhsadfh474=+d'
+        self.headers = {
+             'Authorization': 'Basic ' + b64encode(
+                f"{user_data['username']}:{user_data['password']}".encode('ascii')).decode('utf-8')
+        }
+
 
     def test_user_creation(self):
         user_data = {
@@ -89,7 +107,29 @@ class TestUsers(TestCase):
         """
         Редактирование пользователя
         """
-        pass
+        user_data = {
+            "username": 'user',
+            'password': 'user'
+        }
+        user = UserModel(**user_data)
+        user.save()
+        user_id = user.id
+
+        new_note = {
+            "username": 'user1'
+        }
+
+        self.create_and_auth_user()
+
+        res = self.client.put(f'/users/{user_id}',
+                              headers=self.headers,
+                              data=json.dumps(new_note),
+                              content_type='application/json')
+
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data["text"], new_note["text"])
+        # self.assertEqual(response.status_code, 200)
 
     def test_delete_user(self):
         """
@@ -114,6 +154,7 @@ class TestNotes(TestCase):
 
         with self.app.app_context():
             # create all tables
+            db.drop_all()
             db.create_all()
 
         # Создаем и залогиниваем пользователя
@@ -212,7 +253,8 @@ class TestNotes(TestCase):
         """
         Получение заметки с несуществующим id
         """
-        pass
+        res = self.client.get('/notes/2', headers=self.headers)
+        self.assertEqual(res.status_code, 404)
 
 
 
@@ -250,6 +292,29 @@ class TestNotes(TestCase):
         """
         Редактирование заметки
         """
+        notes_data = [
+            {
+                "text": 'Test note 1',
+            },
+            {
+                "text": 'Test note 2',
+            }
+        ]
+        ids = []
+        for note_data in notes_data:
+            note = NoteModel(author_id=self.user.id, **note_data)
+            note.save()
+            ids.append(note.id)
+
+        new_note = {"text": 'Test 1'}
+
+        res = self.client.put('/notes/2',
+                              headers=self.headers,
+                              data=json.dumps(new_note),
+                              content_type='application/json')
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data["text"], new_note["text"])
 
     def test_delete_note(self):
         """
