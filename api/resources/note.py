@@ -13,6 +13,8 @@ class NoteResource(Resource):
         note = NoteModel.query.get(note_id)
         if not note:
             abort(404, error=f"Note with id={note_id} not found")
+        if note.author != author:
+            abort(403, error=f"Forbidden")
         return note_schema.dump(note), 200
 
     @auth.login_required
@@ -37,12 +39,19 @@ class NoteResource(Resource):
         note.save()
         return note_schema.dump(note), 200
 
+    @auth.login_required
     def delete(self, note_id):
         """
         Пользователь может удалять ТОЛЬКО свои заметки
         """
-        raise NotImplemented("Метод не реализован")
-        return note_dict, 200
+        author = g.user
+        note = NoteModel.query.get(note_id)
+        if not note:
+            abort(404, error=f"note {note_id} not found")
+        if note.author != author:
+            abort(403, error=f"Forbidden")
+        note.delete()
+        return f"Note ${note_id} deleted.", 200
 
 
 class NotesListResource(Resource):
@@ -57,7 +66,7 @@ class NotesListResource(Resource):
         parser.add_argument("text", required=True)
         # Подсказка: чтобы разобраться с private="False",
         #   смотрите тут: https://flask-restful.readthedocs.io/en/latest/reqparse.html#request-parsing
-        parser.add_argument("private", required=True)
+        parser.add_argument("private", type=bool, required=True)
         note_data = parser.parse_args()
         note = NoteModel(author_id=author.id, **note_data)
         note.save()
