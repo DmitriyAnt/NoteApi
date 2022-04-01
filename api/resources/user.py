@@ -45,8 +45,7 @@ class UsersListResource(Resource):
         parser.add_argument("password", required=True)
         user_data = parser.parse_args()
         user = UserModel(**user_data)
-        try:
-            user.save()
-        except Exception:
-            abort(400, error=f"User with username:{user.username} already exist")
+        user.save()
+        if not user.id:
+            abort(400, error=f"User with username:{user_data.username} already exist")
         return user_schema.dump(user), 201

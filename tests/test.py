@@ -115,8 +115,6 @@ class TestUsers(TestCase):
                                content_type='application/json')
         self.assertEqual(res.status_code, 400)
 
-
-
     def test_edit_user(self):
         """
         Редактирование пользователя
