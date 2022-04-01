@@ -31,7 +31,7 @@ class UserModel(db.Model):
         try:
             db.session.add(self)
             db.session.commit()
-        except IntegrityError as e:   # Обработка ошибки "создание пользователя с НЕ уникальным именем"
+        except IntegrityError:   # Обработка ошибки "создание пользователя с НЕ уникальным именем"
             db.session.rollback()
 
     def delete(self):
