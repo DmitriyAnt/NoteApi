@@ -1,11 +1,17 @@
-from flask_restful import abort, Resource, reqparse
+from flask_apispec import marshal_with, use_kwargs, doc, MethodResource
+from flask_restful import abort
 from api import auth, g
 from api.models.note import NoteModel
-from api.schemas.note import note_schema, notes_schema
+from api.schemas.note import NoteSchema, NoteRequestSchema
 
 
-class NoteResource(Resource):
+@doc(tags=['Notes'])
+class NoteResource(MethodResource):
     @auth.login_required
+    @doc(security=[{"basicAuth": []}])
+    @doc(description='Full: Note users by id')
+    @doc(summary='Get Note by id')
+    @marshal_with(NoteSchema(), 200)
     def get(self, note_id):
         """
         Пользователь может получить ТОЛЬКО свою заметку
@@ -16,31 +22,32 @@ class NoteResource(Resource):
             abort(404, error=f"Note with id={note_id} not found")
         if note.author != author:
             abort(403, error=f"Forbidden")
-        return note_schema.dump(note), 200
+        return note, 200
 
     @auth.login_required
-    def put(self, note_id):
+    @doc(security=[{"basicAuth": []}])
+    @doc(description='Edit note by id')
+    @marshal_with(NoteSchema, code=200)
+    @use_kwargs(NoteRequestSchema, location='json')
+    def put(self, note_id, **kwargs):
         """
         Пользователь может редактировать ТОЛЬКО свои заметки
         """
         author = g.user
-        parser = reqparse.RequestParser()
-        parser.add_argument("text", required=True)
-        parser.add_argument("private", type=bool)
-        note_data = parser.parse_args()
         note = NoteModel.query.get(note_id)
         if not note:
             abort(404, error=f"note {note_id} not found")
         if note.author != author:
             abort(403, error=f"Forbidden")
-        note.text = note_data["text"]
+        note.text = kwargs["text"]
 
-        note.private = note_data.get("private") or note.private
-
+        note.private = kwargs.get("private") or note.private
         note.save()
-        return note_schema.dump(note), 200
+        return note, 200
 
     @auth.login_required
+    @doc(security=[{"basicAuth": []}])
+    @doc(description='Deleted note by id')
     def delete(self, note_id):
         """
         Пользователь может удалять ТОЛЬКО свои заметки
@@ -55,20 +62,22 @@ class NoteResource(Resource):
         return f"Note ${note_id} deleted.", 200
 
 
-class NotesListResource(Resource):
+@doc(tags=['Notes'])
+class NotesListResource(MethodResource):
+    @doc(description='Full: Get all notes')
+    @doc(summary='Get all notes')
+    @marshal_with(NoteSchema(many=True), code=200)
     def get(self):
         notes = NoteModel.query.all()
-        return notes_schema.dump(notes), 200
+        return notes, 200
 
     @auth.login_required
-    def post(self):
+    @doc(security=[{"basicAuth": []}])
+    @doc(summary='Create new note')
+    @marshal_with(NoteSchema, code=201)
+    @use_kwargs(NoteRequestSchema, location='json')
+    def post(self, **kwargs):
         author = g.user
-        parser = reqparse.RequestParser()
-        parser.add_argument("text", required=True)
-        # Подсказка: чтобы разобраться с private="False",
-        #   смотрите тут: https://flask-restful.readthedocs.io/en/latest/reqparse.html#request-parsing
-        parser.add_argument("private", type=bool, required=True)
-        note_data = parser.parse_args()
-        note = NoteModel(author_id=author.id, **note_data)
+        note = NoteModel(author_id=author.id, **kwargs)
         note.save()
-        return note_schema.dump(note), 201
+        return note, 201

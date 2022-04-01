@@ -5,6 +5,12 @@ from apispec.ext.marshmallow import MarshmallowPlugin
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 
+security_definitions = {
+   "basicAuth": {
+       "type": "basic"
+   }
+}
+
 
 class Config:
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///' + os.path.join(base_dir, 'base.db')
@@ -18,6 +24,8 @@ class Config:
         title='Notes Project',
         version='v1',
         plugins=[MarshmallowPlugin()],
+        securityDefinitions=security_definitions,
+        security=[],
         openapi_version='2.0.0'
     )
     APISPEC_SWAGGER_URL = '/swagger'  # URI API Doc JSON
