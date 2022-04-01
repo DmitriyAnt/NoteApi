@@ -1,7 +1,9 @@
 from flask_apispec import marshal_with, use_kwargs, doc, MethodResource
+from webargs import fields
 from flask_restful import abort
 from api import auth, g
 from api.models.note import NoteModel
+from api.models.tag import TagModel
 from api.schemas.note import NoteSchema, NoteRequestSchema
 
 
@@ -81,3 +83,22 @@ class NotesListResource(MethodResource):
         note = NoteModel(author_id=author.id, **kwargs)
         note.save()
         return note, 201
+
+
+@doc(tags=['Notes'])
+class NoteSetTagsResource(MethodResource):
+    @doc(summary="Set tags to Note")
+    @use_kwargs({"tags": fields.List(fields.Int())}, location='json')
+    @marshal_with(NoteSchema)
+    def put(self, note_id, **kwargs):
+        note = NoteModel.query.get(note_id)
+        if not note:
+            return {"error": f"note {note_id} not found"}, 400
+        print("note kwargs = ", kwargs)
+
+        tag_id = kwargs.get("tags", [])
+        for tag in tag_id:
+            t = TagModel.query.get(tag)
+            note.tags.append(t)
+        note.save()
+        return note, 200
