@@ -4,7 +4,6 @@ from app import app
 from unittest import TestCase
 from api.models.user import UserModel
 from api.models.note import NoteModel
-from api.schemas.user import UserSchema
 from base64 import b64encode
 from config import Config
 
@@ -35,10 +34,9 @@ class TestUsers(TestCase):
         self.user = user
         # "login:password" --> b64 --> 'ksjadhsadfh474=+d'
         self.headers = {
-             'Authorization': 'Basic ' + b64encode(
+            'Authorization': 'Basic ' + b64encode(
                 f"{user_data['username']}:{user_data['password']}".encode('ascii')).decode('utf-8')
         }
-
 
     def test_user_creation(self):
         user_data = {
@@ -101,7 +99,23 @@ class TestUsers(TestCase):
         """
         Проверяет невозможность создания нескольких пользователей с одинаковым username
         """
-        pass
+        user_data = {
+            "username": 'admin',
+            'password': 'admin'
+        }
+        res = self.client.post('/users',
+                               data=json.dumps(user_data),
+                               content_type='application/json')
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 201)
+        self.assertIn('admin', data.values())
+
+        res = self.client.post('/users',
+                               data=json.dumps(user_data),
+                               content_type='application/json')
+        self.assertEqual(res.status_code, 400)
+
+
 
     def test_edit_user(self):
         """
@@ -128,14 +142,23 @@ class TestUsers(TestCase):
 
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
-        self.assertEqual(data["text"], new_note["text"])
-        # self.assertEqual(response.status_code, 200)
+        self.assertEqual(data["username"], new_note["username"])
 
     def test_delete_user(self):
         """
         Удаление пользователя
         """
-        pass
+        user_data = {
+            "username": 'user',
+            'password': 'user'
+        }
+        user = UserModel(**user_data)
+        user.save()
+        user_id = user.id
+
+        self.create_and_auth_user()
+        res = self.client.delete(f'/users/{user_id}', headers=self.headers)
+        self.assertEqual(res.status_code, 200)
 
     def tearDown(self):
         with self.app.app_context():
@@ -255,8 +278,6 @@ class TestNotes(TestCase):
         """
         res = self.client.get('/notes/2', headers=self.headers)
         self.assertEqual(res.status_code, 404)
-
-
 
     def test_private_public_notes(self):
         """

@@ -1,5 +1,5 @@
-from flask_restful import Resource
-from api import abort, reqparse, auth, docs
+from flask_restful import abort, Resource, reqparse
+from api import auth, docs
 from api.models.user import UserModel
 from api.schemas.user import user_schema, users_schema, UserSchema
 from flask_apispec.views import MethodResource
@@ -15,7 +15,7 @@ class UserResource(MethodResource):
             abort(404, error=f"User with id={user_id} not found")
         return user, 200
 
-    @auth.login_required(role="admin")
+    @auth.login_required #(role="admin")
     def put(self, user_id):
         parser = reqparse.RequestParser()
         parser.add_argument("username", required=True)
@@ -25,9 +25,13 @@ class UserResource(MethodResource):
         user.save()
         return user_schema.dump(user), 200
 
-    @auth.login_required
+    @auth.login_required  #(role="admin")
     def delete(self, user_id):
-        raise NotImplemented  # не реализовано!
+        note = UserModel.query.get(user_id)
+        if not note:
+            abort(404, error=f"User {user_id} not found")
+        note.delete()
+        return f"Note ${user_id} deleted.", 200
 
 
 class UsersListResource(Resource):
@@ -41,7 +45,8 @@ class UsersListResource(Resource):
         parser.add_argument("password", required=True)
         user_data = parser.parse_args()
         user = UserModel(**user_data)
-        user.save()
-        if not user.id:
+        try:
+            user.save()
+        except Exception:
             abort(400, error=f"User with username:{user.username} already exist")
         return user_schema.dump(user), 201

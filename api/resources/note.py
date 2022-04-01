@@ -1,4 +1,5 @@
-from api import auth, abort, g, Resource, reqparse
+from flask_restful import abort, Resource, reqparse
+from api import auth, g
 from api.models.note import NoteModel
 from api.schemas.note import note_schema, notes_schema
 

@@ -1,4 +1,5 @@
-from api import Resource, g, auth
+from api import g, auth
+from flask_restful import Resource
 
 
 class TokenResource(Resource):
