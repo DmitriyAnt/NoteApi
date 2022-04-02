@@ -19,7 +19,7 @@ class UserResource(MethodResource):
         return user, 200
 
     @doc(security=[{"basicAuth": []}])
-    @auth.login_required  # (role="admin")
+    @auth.login_required(role="admin")
     @doc(description='Edit users by id')
     @doc(responses={"401": {"description": "Unauthorized"}})
     @marshal_with(UserSchema, code=200)
@@ -31,7 +31,7 @@ class UserResource(MethodResource):
         return user, 200
 
     @doc(security=[{"basicAuth": []}])
-    @auth.login_required  # (role="admin")
+    @auth.login_required(role="admin")
     @doc(responses={"401": {"description": "Unauthorized"}})
     @doc(responses={"404": {"description": "Not found"}})
     @doc(description='Deleted users by id')
