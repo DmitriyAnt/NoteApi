@@ -31,6 +31,7 @@ def load_fixtures(message):
                 db.session.commit()
                 count += 1
             except IntegrityError:
+                print(f"Object skipped")
                 db.session.rollback()
 
         print(f"{count} records created")
