@@ -4,6 +4,7 @@ import click
 from sqlalchemy.exc import IntegrityError
 from api import db
 from api.models.note import NoteModel
+from api.models.tag import TagModel
 from api.models.user import UserModel
 from config import BASE_DIR
 
@@ -12,13 +13,14 @@ from config import BASE_DIR
 models = {
     "NoteModel": NoteModel,
     "UserModel": UserModel,
+    "TagModel": TagModel,
 }
 
 
 @click.command
-@click.argument('message')
-def load_fixtures(message):
-    path_to_fixture = BASE_DIR / "fixtures" / message
+@click.option('--fixture', help='File with fixture')
+def load_fixtures(fixture):
+    path_to_fixture = BASE_DIR / "fixtures" / fixture
     with open(path_to_fixture, "r", encoding="UTF-8") as f:
         data = json.load(f)
         count = 0

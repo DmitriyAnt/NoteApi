@@ -2,32 +2,17 @@
   "model": "UserModel",
   "records": [
     {
-      "username": "FixtureUser-1",
-      "password": "1234"
+      "username": "admin",
+      "password": "admin",
+      "role": "admin"
     },
     {
-      "username": "FixtureUser-2",
-      "password": "1234"
+      "username": "Ivan",
+      "password": "Ivan"
     },
     {
-      "username": "FixtureUser-3",
-      "password": "1234"
-    },
-    {
-      "username": "FixtureUser-4",
-      "password": "1234"
-    },
-    {
-      "username": "FixtureUser-5",
-      "password": "1234"
-    },
-    {
-      "username": "FixtureUser-6",
-      "password": "1234"
-    },
-    {
-      "username": "FixtureUser-7",
-      "password": "1234"
+      "username": "Petr",
+      "password": "Petr"
     }
   ]
 }
