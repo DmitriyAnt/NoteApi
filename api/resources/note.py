@@ -28,7 +28,7 @@ class NoteResource(MethodResource):
 
     @auth.login_required
     @doc(security=[{"basicAuth": []}])
-    @doc(description='Edit note by id')
+    @doc(summary='Edit note by id')
     @marshal_with(NoteSchema, code=200)
     @use_kwargs(NoteRequestSchema, location='json')
     def put(self, note_id, **kwargs):

@@ -26,7 +26,8 @@ class TestUsers(TestCase):
     def create_and_auth_user(self):
         user_data = {
             "username": 'admin',
-            'password': 'admin'
+            'password': 'admin',
+            "role": 'admin'
         }
 
         user = UserModel(**user_data)
@@ -181,7 +182,8 @@ class TestNotes(TestCase):
         # Создаем и залогиниваем пользователя
         user_data = {
             "username": 'admin',
-            'password': 'admin'
+            'password': 'admin',
+            "role": 'admin'
         }
         self.create_and_auth_user(user_data)
 
