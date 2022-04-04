@@ -93,11 +93,11 @@ class NoteSetTagsResource(MethodResource):
     def put(self, note_id, **kwargs):
         note = NoteModel.query.get(note_id)
         if not note:
-            return {"error": f"note {note_id} not found"}, 400
-        print("note kwargs = ", kwargs)
+            return {"error": f"note {note_id} not found"}, 404
+        # print("note kwargs = ", kwargs)
 
-        tags_id = kwargs.get("tags", [])
-        for tag_id in tags_id:
+        tags_ids = kwargs.get("tags", [])
+        for tag_id in tags_ids:
             tag = TagModel.query.get(tag_id)
             if tag:
                 note.tags.append(tag)
