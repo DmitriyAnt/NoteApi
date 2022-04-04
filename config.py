@@ -2,8 +2,10 @@ import os
 
 from apispec import APISpec
 from apispec.ext.marshmallow import MarshmallowPlugin
+from pathlib import Path
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = Path(__file__).parent
 
 security_definitions = {
    "basicAuth": {
