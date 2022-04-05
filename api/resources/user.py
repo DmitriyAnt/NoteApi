@@ -1,7 +1,7 @@
 from flask_restful import abort
 from api import auth
 from api.models.user import UserModel
-from api.schemas.user import UserSchema, UserRequestSchema
+from api.schemas.user import UserSchema, UserRequestSchema, EditUserSchema
 from flask_apispec.views import MethodResource
 from flask_apispec import marshal_with, use_kwargs, doc
 
@@ -23,7 +23,7 @@ class UserResource(MethodResource):
     @doc(description='Edit users by id')
     @doc(responses={"401": {"description": "Unauthorized"}})
     @marshal_with(UserSchema, code=200)
-    @use_kwargs(UserRequestSchema, location='json')
+    @use_kwargs(EditUserSchema, location='json')
     def put(self, user_id, **kwargs):
         user = UserModel.query.get(user_id)
         user.username = kwargs["username"]

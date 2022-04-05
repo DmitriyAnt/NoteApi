@@ -40,5 +40,17 @@ docs.register(NoteSetTagsResource)
 docs.register(TagResource)
 docs.register(TagListResource)
 
+
+#Дляформирования правильной ошибки десериализации:
+@app.errorhandler(422)
+def handle_unprocessable_entity(err):
+    exc = getattr(err, 'exc')
+    if exc:
+        messages = exc.messages
+    else:
+        messages = ['Invalid request']
+    return { 'status': 'error', 'result': messages }, 400
+
+
 if __name__ == '__main__':
     app.run(debug=Config.DEBUG, port=Config.PORT)

@@ -316,9 +316,11 @@ class TestNotes(TestCase):
         notes_data = [
             {
                 "text": 'Test note 1',
+                "private": False,
             },
             {
                 "text": 'Test note 2',
+                "private": False,
             }
         ]
         ids = []
@@ -327,7 +329,10 @@ class TestNotes(TestCase):
             note.save()
             ids.append(note.id)
 
-        new_note = {"text": 'Test 1'}
+        new_note = {
+            "text": 'Test 1',
+            "private": False,
+        }
 
         res = self.client.put('/notes/2',
                               headers=self.headers,

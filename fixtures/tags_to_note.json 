@@ -1,0 +1,17 @@
+{
+  "model": "TagToNote",
+  "records": [
+    {
+      "node": 1,
+      "tags": [1,2]
+    },
+    {
+      "node": 2,
+      "tags": [2]
+    },
+    {
+      "node": 3,
+      "tags": [1]
+    }
+  ]
+}

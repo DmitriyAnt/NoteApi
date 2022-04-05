@@ -4,7 +4,7 @@ from flask_restful import abort
 from api import auth, g
 from api.models.note import NoteModel
 from api.models.tag import TagModel
-from api.schemas.note import NoteSchema, NoteRequestSchema
+from api.schemas.note import NoteSchema, NoteRequestSchema, EditNoteSchema
 
 
 @doc(tags=['Notes'])
@@ -29,7 +29,7 @@ class NoteResource(MethodResource):
     @auth.login_required
     @doc(security=[{"basicAuth": []}])
     @doc(summary='Edit note by id')
-    @marshal_with(NoteSchema, code=200)
+    @marshal_with(EditNoteSchema, code=200)
     @use_kwargs(NoteRequestSchema, location='json')
     def put(self, note_id, **kwargs):
         """

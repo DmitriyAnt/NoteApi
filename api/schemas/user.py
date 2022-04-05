@@ -20,4 +20,13 @@ class UserRequestSchema(ma.SQLAlchemySchema):
 
     username = ma.Str(required=True)
     password = ma.Str(required=True)
+    role = ma.Str()
 
+
+# Только для редактирования
+class EditUserSchema(ma.SQLAlchemySchema):
+    class Meta:
+        model = UserModel
+
+    username = ma.Str(required=True)
+    role = ma.Str()
