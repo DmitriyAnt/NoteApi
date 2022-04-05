@@ -135,4 +135,4 @@ class NotesFilterResource(MethodResource):
             notes = NoteModel.query.join(NoteModel.author).filter_by(username=kwargs['username']).all()
             return notes, 200
 
-        return {"error": f"Error params - {kwargs}"}, 404
+        return {"error": f"Error params!"}, 404
