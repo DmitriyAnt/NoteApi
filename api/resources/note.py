@@ -4,6 +4,7 @@ from flask_restful import abort
 from api import auth, g
 from api.models.note import NoteModel
 from api.models.tag import TagModel
+from api.models.user import UserModel
 from api.schemas.note import NoteSchema, NoteRequestSchema, EditNoteSchema
 
 
@@ -103,3 +104,35 @@ class NoteSetTagsResource(MethodResource):
                 note.tags.append(tag)
         note.save()
         return note, 200
+
+
+@doc(tags=['Notes'])
+class NotesFilterResource(MethodResource):
+    @doc(description='Get user notes')
+    @doc(summary='Get user notes')
+    @marshal_with(NoteSchema(many=True), code=200)
+    def get(self, user_id):
+        author = UserModel.query.get(user_id)
+        if not author:
+            return {"error": f"Author with id={user_id} not found"}, 404
+        notes = NoteModel.query.join(NoteModel.author).filter_by(username=author.username).all()
+        return notes, 200
+
+    @doc(description='Get notes filters by name or tags name')
+    @doc(summary='Get notes filters by name or tags name')
+    @marshal_with(NoteSchema(many=True), code=200)
+    @use_kwargs({"tags": fields.List(fields.Str())}, location='query')
+    @use_kwargs({"username": fields.Str()}, location='query')
+    def get(self, **kwargs):
+        if kwargs.get('tags', None):
+            notes = []
+            for tag_name in kwargs['tags']:
+                notes_tag = NoteModel.query.join(NoteModel.tags).filter_by(name=tag_name).all()
+                notes.extend(notes_tag)
+            return notes, 200
+
+        if kwargs.get('username', None):
+            notes = NoteModel.query.join(NoteModel.author).filter_by(username=kwargs['username']).all()
+            return notes, 200
+
+        return {"error": f"Error params{kwargs}"}, 404

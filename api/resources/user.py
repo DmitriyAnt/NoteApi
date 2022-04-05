@@ -15,7 +15,7 @@ class UserResource(MethodResource):
     def get(self, user_id):
         user = UserModel.query.get(user_id)
         if not user:
-            abort(404, error=f"User with id={user_id} not found")
+            return {"error" : f"User with id={user_id} not found"}
         return user, 200
 
     @doc(security=[{"basicAuth": []}])
