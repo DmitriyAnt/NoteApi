@@ -341,6 +341,7 @@ class TestNotes(TestCase):
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data["text"], new_note["text"])
+        self.assertEqual(data["private"], new_note["private"])
 
     def test_delete_note(self):
         """
