@@ -39,18 +39,5 @@ def load_fixtures(fixture):
         print(f"{count} records created")
 
 
-# users_data = UserRequestSchema(many=True).loads(f.read())
-# count = 0
-# for user_data in users_data:
-#     user = UserModel(**user_data)
-#     db.session.add(user)
-#     try:
-#         db.session.commit()
-#         count += 1
-#     except IntegrityError:
-#         db.session.rollback()
-#         print(f"User {user.username} already exists")
-
-
 if __name__ == "__main__":
     load_fixtures()

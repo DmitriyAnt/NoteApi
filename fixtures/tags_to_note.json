@@ -2,15 +2,15 @@
   "model": "TagToNote",
   "records": [
     {
-      "node": 1,
+      "note": 1,
       "tags": [1,2]
     },
     {
-      "node": 2,
+      "note": 2,
       "tags": [2]
     },
     {
-      "node": 3,
+      "note": 3,
       "tags": [1]
     }
   ]

@@ -3,6 +3,8 @@ import json
 from sqlalchemy.exc import IntegrityError
 
 from api import db
+from api.models.note import NoteModel
+from api.models.tag import TagModel
 from config import BASE_DIR
 
 
@@ -11,11 +13,13 @@ def load_tags_to_note_fixture():
     with open(path_to_fixture, "r", encoding="UTF-8") as f:
         data = json.load(f)
         count = 0
-        model_name = data["model"]
-        model = models[model_name]
         for record in data["records"]:
-            model_obj = model(**record)
-            db.session.add(model_obj)
+            note = NoteModel.query.get(record["note"])
+            for tag_id in record["tags"]:
+                tag = TagModel.query.get(tag_id)
+                if tag:
+                    note.tags.append(tag)
+            db.session.add(note)
             try:
                 db.session.commit()
                 count += 1
@@ -23,20 +27,7 @@ def load_tags_to_note_fixture():
                 print(f"Object skipped")
                 db.session.rollback()
 
-        print(f"{count} records created")
-
-
-# users_data = UserRequestSchema(many=True).loads(f.read())
-# count = 0
-# for user_data in users_data:
-#     user = UserModel(**user_data)
-#     db.session.add(user)
-#     try:
-#         db.session.commit()
-#         count += 1
-#     except IntegrityError:
-#         db.session.rollback()
-#         print(f"User {user.username} already exists")
+        print(f"{count} notes updated")
 
 
 if __name__ == "__main__":
