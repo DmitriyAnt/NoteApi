@@ -6,5 +6,10 @@
 
 # Миграции
 1. Активировать миграции: flask db init
-1. Создать миграцию: flask db migrate -m "comment"
-1. Применить миграции: flask db upgrade
+2. Создать миграцию: flask db migrate -m "comment"
+3. Применить миграции: flask db upgrade
+
+# Переменные окружения
+1. Установить утилиту для работы с env: sudo apt install direnv
+2. Разрешить установку переменных окружения: direnv allow .
+3. Запуск проекта: flask run
