@@ -7,4 +7,4 @@ tmp/
 *.pyc
 *.log
 *.pot
-*nano
+nano.save

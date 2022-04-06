@@ -1,3 +1,4 @@
+from flask import g
 from flask_restful import abort
 from api import auth
 from api.models.user import UserModel
@@ -15,7 +16,7 @@ class UserResource(MethodResource):
     def get(self, user_id):
         user = UserModel.query.get(user_id)
         if not user:
-            return {"error" : f"User with id={user_id} not found"}
+            return {"error": f"User with id={user_id} not found"}, 404
         return user, 200
 
     @doc(security=[{"basicAuth": []}])
@@ -38,7 +39,7 @@ class UserResource(MethodResource):
     def delete(self, user_id):
         note = UserModel.query.get(user_id)
         if not note:
-            abort(404, error=f"User {user_id} not found")
+            return {"error": f"User {user_id} not found"}, 404
         note.delete()
         return f"Note ${user_id} deleted.", 200
 
@@ -52,12 +53,17 @@ class UsersListResource(MethodResource):
         users = UserModel.query.all()
         return users, 200
 
+    @auth.login_required
     @doc(summary='Create new user')
     @marshal_with(UserSchema, code=201)
     @use_kwargs(UserRequestSchema, location='json')
     def post(self, **kwargs):
+        # admin = g.getuser()
+        # if admin.role != 'admin':
+        #     return {"error": f"Not admin create user"}, 400
+
         user = UserModel(**kwargs)
         user.save()
         if not user.id:
-            abort(400, error=f"User with username:{user.username} already exist")
+            return {"error": f"User with username:{user.username} already exist"}, 400
         return user, 201

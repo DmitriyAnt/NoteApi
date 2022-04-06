@@ -13,3 +13,4 @@
 1. Установить утилиту для работы с env: sudo apt install direnv
 2. Разрешить установку переменных окружения: direnv allow .
 3. Запуск проекта: flask run
+4. Создание Admin: flask createsuperuser
