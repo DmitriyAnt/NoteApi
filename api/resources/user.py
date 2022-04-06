@@ -5,6 +5,7 @@ from api.models.user import UserModel
 from api.schemas.user import UserSchema, UserRequestSchema, EditUserSchema
 from flask_apispec.views import MethodResource
 from flask_apispec import marshal_with, use_kwargs, doc
+from helpers.shortcuts import get_object_or_404
 
 
 @doc(tags=['Users'])
@@ -14,10 +15,7 @@ class UserResource(MethodResource):
     @doc(responses={"404": {"description": "Not found"}})
     @marshal_with(UserSchema, code=200)
     def get(self, user_id):
-        user = UserModel.query.get(user_id)
-        if not user:
-            return {"error": f"User with id={user_id} not found"}, 404
-        return user, 200
+        return get_object_or_404(UserModel, user_id), 200
 
     @doc(security=[{"basicAuth": []}])
     @auth.login_required(role="admin")
@@ -37,10 +35,8 @@ class UserResource(MethodResource):
     @doc(responses={"404": {"description": "Not found"}})
     @doc(description='Deleted users by id')
     def delete(self, user_id):
-        note = UserModel.query.get(user_id)
-        if not note:
-            return {"error": f"User {user_id} not found"}, 404
-        note.delete()
+        user = get_object_or_404(UserModel, user_id)
+        user.delete()
         return f"Note ${user_id} deleted.", 200
 
 
@@ -53,7 +49,7 @@ class UsersListResource(MethodResource):
         users = UserModel.query.all()
         return users, 200
 
-    @auth.login_required
+    # @auth.login_required
     @doc(summary='Create new user')
     @marshal_with(UserSchema, code=201)
     @use_kwargs(UserRequestSchema, location='json')

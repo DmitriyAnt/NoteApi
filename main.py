@@ -20,6 +20,12 @@ api.add_resource(TokenResource,
 api.add_resource(note.NotesListResource,
                  '/notes',  # GET, POST
                  )
+api.add_resource(note.NotesPublicResource,
+                 '/notes/public',  # GET
+                 )
+api.add_resource(note.NotesPublicFilterResource,
+                 '/notes/public/filter',  # GET
+                 )
 api.add_resource(note.NoteResource,
                  '/notes/<int:note_id>'  # GET, PUT, DELETE
                  )
@@ -37,6 +43,8 @@ api.add_resource(note.NotesFilterResource,
 docs.register(UserResource)
 docs.register(UsersListResource)
 docs.register(note.NoteResource)
+docs.register(note.NotesPublicResource)
+docs.register(note.NotesPublicFilterResource)
 docs.register(note.NotesListResource)
 docs.register(note.NoteSetTagsResource)
 docs.register(TagResource)

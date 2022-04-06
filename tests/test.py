@@ -41,15 +41,16 @@ class TestUsers(TestCase):
 
     def test_user_creation(self):
         user_data = {
-            "username": 'admin',
-            'password': 'admin'
+            "username": 'user',
+            'password': 'user'
         }
         res = self.client.post('/users',
+                               # headers=self.headers,
                                data=json.dumps(user_data),
                                content_type='application/json')
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 201)
-        self.assertIn('admin', data.values())
+        self.assertIn('user', data.values())
 
     def test_user_get_by_id(self):
         user_data = {
