@@ -1,7 +1,8 @@
 import warnings
+from flask_babel import Babel
 from config import Config
 from flask import Flask, g
-from flask_restful import Api
+from flask_restful import Api, reqparse, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_marshmallow import Marshmallow
@@ -12,6 +13,7 @@ app = Flask(__name__)
 app.config.from_object(Config)
 
 api = Api(app)
+babel = Babel(app)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 ma = Marshmallow(app)
@@ -27,6 +29,11 @@ warnings.filterwarnings(
 # Импорт команд
 with app.app_context():
     from commands import *
+
+
+@babel.localeselector
+def get_locale():
+    return request.accept_languages.best_match(app.config['LANGUAGES'])
 
 
 @auth.verify_password
