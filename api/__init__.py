@@ -1,3 +1,4 @@
+import warnings
 from config import Config
 from flask import Flask, g
 from flask_restful import Api
@@ -17,6 +18,11 @@ ma = Marshmallow(app)
 auth = HTTPBasicAuth()
 # swagger = Swagger(app)
 docs = FlaskApiSpec(app)
+
+warnings.filterwarnings(
+    "ignore",
+    message="Multiple schemas resolved to the name "
+)
 
 # Импорт команд
 with app.app_context():

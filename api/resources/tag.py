@@ -1,5 +1,4 @@
 from flask_apispec import MethodResource, doc, use_kwargs, marshal_with
-from flask_restful import abort
 from api.models.tag import TagModel
 from api.schemas.tag import TagSchema, TagRequestSchema
 from helpers.shortcuts import get_object_or_404
@@ -49,5 +48,5 @@ class TagListResource(MethodResource):
         tag = TagModel(**kwargs)
         tag.save()
         if not tag.id:
-            abort(400, error=f"Tag already exist")
+            return {"error": f"Tag already exist"}, 400
         return tag, 201

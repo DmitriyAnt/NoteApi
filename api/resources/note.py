@@ -1,6 +1,5 @@
 from flask_apispec import marshal_with, use_kwargs, doc, MethodResource
 from webargs import fields
-from flask_restful import abort
 from api import auth, g
 from api.models.note import NoteModel
 from api.models.tag import TagModel
@@ -21,11 +20,9 @@ class NoteResource(MethodResource):
         Пользователь может получить ТОЛЬКО свою заметку
         """
         author = g.user
-        note = NoteModel.query.get(note_id)
-        if not note:
-            abort(404, error=f"Note with id={note_id} not found")
+        note = get_object_or_404(NoteModel, note_id)
         if note.author != author:
-            abort(403, error=f"Forbidden")
+            return {"error": f"Forbidden"}, 403
         return note, 200
 
     @auth.login_required
@@ -40,7 +37,7 @@ class NoteResource(MethodResource):
         author = g.user
         note = get_object_or_404(NoteModel, note_id)
         if note.author != author:
-            abort(403, error=f"Forbidden")
+            return {"error": f"Forbidden"}, 403
         note.text = kwargs["text"]
 
         note.private = kwargs.get("private") or note.private
@@ -113,13 +110,12 @@ class NoteSetTagsResource(MethodResource):
     @marshal_with(NoteSchema)
     def delete(self, note_id, **kwargs):
         note = get_object_or_404(NoteModel, note_id)
-        # print("note kwargs = ", kwargs)
 
-        tags_ids = kwargs.get("tags", [])
-        for tag_id in tags_ids:
-            tag = TagModel.query.get(tag_id)
+        tags = kwargs.get("tags", [])
+        for tag_name in tags:
+            tag = TagModel.query.filter_by(name=tag_name)
             if tag:
-                note.tags.append(tag)
+                note.tags.remove(tag)
         note.save()
         return note, 200
 

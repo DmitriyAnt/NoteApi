@@ -2,6 +2,7 @@ import click
 
 from api import app, db
 from api.models.user import UserModel
+from load_fixture import load_fixtures
 
 
 @app.cli.command('createsuperuser')
@@ -68,7 +69,7 @@ def load_fixture(param):
     if param == "load":
         filename = input("Enter fixture file name:")
         if filename:
-            load_fixture(filename)
+            load_fixtures(filename)
     else:
         print(f"Unknown command - {param}")
 
