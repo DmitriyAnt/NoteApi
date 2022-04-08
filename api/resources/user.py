@@ -13,7 +13,8 @@ class UserResource(MethodResource):
     @doc(responses={"404": {"description": "Not found"}})
     @marshal_with(UserSchema, code=200)
     def get(self, user_id):
-        return get_object_or_404(UserModel, user_id), 200
+        user = get_object_or_404(UserModel, user_id)
+        return user, 200
 
     @doc(security=[{"basicAuth": []}])
     @auth.login_required(role="admin")
