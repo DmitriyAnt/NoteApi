@@ -1,6 +1,6 @@
 import json
 from api import db
-from main import app
+from app import app
 from unittest import TestCase
 from api.models.user import UserModel
 from api.models.note import NoteModel
