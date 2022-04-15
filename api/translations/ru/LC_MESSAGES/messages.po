@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-04-07 21:23+0300\n"
-"PO-Revision-Date: 2022-04-07 21:25+0300\n"
+"POT-Creation-Date: 2022-04-08 18:56+0300\n"
+"PO-Revision-Date: 2022-04-08 18:56+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
 "Language-Team: ru <LL@li.org>\n"
@@ -21,6 +21,6 @@ msgstr ""
 
 #: helpers/shortcuts.py:8
 #, python-format
-msgid "{model} with id=%(object_id)s not found"
-msgstr "... c id=%(object_id)s не найден"
+msgid " Model with id=%(object_id)s not found"
+msgstr " Модель с id=%(object_id)s не найдена"
 
